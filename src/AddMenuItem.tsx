@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import handlePress from "./handlePress";
 const boxStyle: React.CSSProperties & Record<string, string> = {
   ["--box-padding-block-start"]: "2px",
@@ -7,8 +7,9 @@ const boxStyle: React.CSSProperties & Record<string, string> = {
   ["--box-padding-inline-end"]: "var(--encore-spacing-tighter)",
   ["--box-min-block-size"]: "56px",
 };
-
 const MenuItem = () => {
+  const [hovering, setHovering] = useState(false);
+
   return (
     <button
       onClick={handlePress}
@@ -16,6 +17,8 @@ const MenuItem = () => {
       className="kLKq7fz4Llya50jObe9a"
       role="menuitem"
       tabIndex={-1}
+      onMouseOver={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
       aria-describedby="subtitle-global-create-youtube"
     >
       <div
@@ -30,7 +33,12 @@ const MenuItem = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   width="25"
                   height="25"
-                  fill="currentColor"
+                  fill={hovering ? "#1DB954" : "currentColor"}
+                  style={
+                    hovering
+                      ? { transition: "all", transform: "rotate(5deg)" }
+                      : {}
+                  }
                   className="bi bi-youtube"
                   viewBox="0 0 16 16"
                 >
