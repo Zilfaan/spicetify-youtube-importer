@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import handlePress from "./handlePress";
+import launchYouTubeImport from "./launchYouTubeImport";
 const boxStyle: React.CSSProperties & Record<string, string> = {
   ["--box-padding-block-start"]: "2px",
   ["--box-padding-block-end"]: "2px",
@@ -12,7 +12,7 @@ const MenuItem = () => {
 
   return (
     <button
-      onClick={handlePress}
+      onClick={launchYouTubeImport}
       id="spicetify-youtube-menuitem"
       className="kLKq7fz4Llya50jObe9a"
       role="menuitem"

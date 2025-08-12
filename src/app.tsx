@@ -1,6 +1,6 @@
 import React from "react";
 import MenuItem from "./AddMenuItem";
-import handlePress from "./handlePress";
+import launchYouTubeImport from "./launchYouTubeImport";
 
 export default function app() {
   // Add entry to create context menu
@@ -43,7 +43,7 @@ export default function app() {
   // Add menu entry to normal context menus
   const myItem = new Spicetify.ContextMenu.Item(
     "Import from YouTube",
-    handlePress,
+    launchYouTubeImport,
     undefined,
     "youtube" as Spicetify.Icon
   );
