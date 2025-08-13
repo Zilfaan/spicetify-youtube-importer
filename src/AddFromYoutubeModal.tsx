@@ -23,7 +23,10 @@ export default function AddFromYoutubeModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitHovered, setSubmitHovered] = useState(false);
 
-  // Backend api to get video/playlist details and download audio
+  // Download directory handle
+  const [downloadDir, setDownloadDir] =
+    useState<FileSystemDirectoryHandle | null>(null);
+
   const API_BASE = "https://sc-youtube-api-production.up.railway.app";
 
   // Functions to fetch data from backend api
@@ -60,6 +63,79 @@ export default function AddFromYoutubeModal() {
       setError("Failed to fetch playlist details");
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  // Saving audio file
+  async function writeBlobToDirectory(
+    dir: FileSystemDirectoryHandle,
+    filename: string,
+    blob: Blob
+  ) {
+    const fileHandle = await dir.getFileHandle(filename, { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(blob);
+    await writable.close();
+  }
+
+  // Pick folder
+  async function pickDownloadFolder(): Promise<FileSystemDirectoryHandle | null> {
+    try {
+      // @ts-ignore - some environments don't have types for showDirectoryPicker
+      const handle = await (window as any).showDirectoryPicker();
+      setDownloadDir(handle);
+      return handle;
+    } catch (err) {
+      console.warn("Directory pick cancelled or failed", err);
+      return null;
+    }
+  }
+
+  // Download one video and write to the selected directory
+  async function downloadVideoById(
+    videoId: string,
+    title?: string, // new optional param
+    dirParam?: FileSystemDirectoryHandle
+  ) {
+    try {
+      const dir = dirParam || downloadDir;
+      if (!dir) throw new Error("No download directory provided");
+
+      const res = await fetch(`${API_BASE}/audio/${videoId}`);
+      if (!res.ok) throw new Error(`Failed to download (${res.status})`);
+
+      // Get file name
+      let safeTitle = title || videoId;
+      safeTitle = safeTitle.replace(/[\/\\?%*:|"<>]/g, "_"); // remove invalid chars
+      const filename = `${safeTitle} [${videoId}].mp3`;
+
+      // Get and save actual file
+      const arrayBuffer = await res.arrayBuffer();
+      const mime = res.headers.get("Content-Type") || "audio/mpeg";
+      const blob = new Blob([arrayBuffer], { type: mime });
+
+      await writeBlobToDirectory(dir, filename, blob);
+      Spicetify.showNotification(`Saved ${filename}`, false);
+    } catch (err) {
+      console.error("download error", err);
+      Spicetify.showNotification("Failed to save file", true);
+    }
+  }
+
+  // Download each playlist item individually
+  async function downloadSelectedVideos(dirParam?: FileSystemDirectoryHandle) {
+    const dir = dirParam || downloadDir;
+    if (!dir) throw new Error("No download dir");
+
+    for (const vid of playlistVideos.filter((v) =>
+      selectedVideoIds.has(v.id)
+    )) {
+      // sequentially download the mp3 files for the selected videos
+      await downloadVideoById(
+        vid.id,
+        typeof vid.title === "string" ? vid.title : vid.title?.text,
+        dir
+      );
     }
   }
 
@@ -249,7 +325,8 @@ export default function AddFromYoutubeModal() {
             opacity: videoDetails || selectedVideoIds.size > 0 ? 1 : 0.8,
             ...(submitHovered ? { filter: "brightness(0.85)" } : {}),
           }}
-          onClick={() => {
+          onClick={async () => {
+            // This click is the user activation that allows showDirectoryPicker.
             if (!url.trim()) {
               Spicetify.showNotification("Please enter a YouTube URL!", true);
               return;
@@ -261,8 +338,21 @@ export default function AddFromYoutubeModal() {
               );
               return;
             }
+            // Ask for folder only once during this user gesture
+            let dir = downloadDir;
+            if (!dir) {
+              dir = await pickDownloadFolder();
+              if (!dir) return; // user cancelled
+            }
+
             Spicetify.PopupModal.hide();
-            //TODO: Actual download logic
+
+            // start downloads using the chosen dir (no further prompts)
+            if (urlType === "video" && videoDetails?.id) {
+              await downloadVideoById(videoDetails.id, videoDetails.title, dir);
+            } else if (urlType === "playlist") {
+              await downloadSelectedVideos(dir);
+            }
           }}
         >
           Add
