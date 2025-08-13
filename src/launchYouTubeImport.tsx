@@ -23,15 +23,11 @@ export default function launchYouTubeImport() {
 
   const container = document.createElement("div");
   const root = Spicetify.ReactDOM.createRoot(container);
-  root.render(<AddFromYoutubeModal onSubmit={handleYouTubeAdd} />);
+  root.render(<AddFromYoutubeModal />);
 
   Spicetify.PopupModal.display({
     title: "Import a Song or Playlist from Youtube",
     content: container,
     isLarge: true,
   });
-}
-
-async function handleYouTubeAdd(url: string) {
-  console.log("Added");
 }
