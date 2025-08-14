@@ -163,11 +163,7 @@ export default function AddFromYoutubeModal() {
   }, [url]);
 
   useEffect(() => {
-    if (playlistVideos.length > 0) {
-      setSelectedVideoIds(new Set(playlistVideos.map((v) => v.id)));
-    } else {
-      setSelectedVideoIds(new Set());
-    }
+    setSelectedVideoIds(new Set());
   }, [playlistVideos]);
 
   // Function to help select which videos to download
