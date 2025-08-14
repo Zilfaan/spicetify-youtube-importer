@@ -23,6 +23,22 @@ export default function AddFromYoutubeModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitHovered, setSubmitHovered] = useState(false);
 
+  const [currentDownload, setCurrentDownload] = useState<string | null>(null);
+  const [downloadTime, setDownloadTime] = useState<number>(0);
+  const [downloadHistory, setDownloadHistory] = useState<
+    { title: string; time?: number; status: "success" | "failed" }[]
+  >([]);
+
+  // Timer effect
+  useEffect(() => {
+    if (!currentDownload) return;
+    const start = Date.now();
+    const interval = setInterval(() => {
+      setDownloadTime(Math.floor((Date.now() - start) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [currentDownload]);
+
   // Download directory handle
   const [downloadDir, setDownloadDir] =
     useState<FileSystemDirectoryHandle | null>(null);
@@ -94,13 +110,19 @@ export default function AddFromYoutubeModal() {
   // Download one video and write to the selected directory
   async function downloadVideoById(
     videoId: string,
-    title?: string, // new optional param
+    title?: string,
     dirParam?: FileSystemDirectoryHandle
   ) {
-    try {
-      const dir = dirParam || downloadDir;
-      if (!dir) throw new Error("No download directory provided");
+    const dir = dirParam || downloadDir;
+    if (!dir) throw new Error("No download directory provided");
 
+    const safeTitle = (title || videoId).replace(/[\/\\?%*:|"<>]/g, "_");
+    setCurrentDownload(safeTitle);
+    setDownloadTime(0);
+
+    const startTime = Date.now();
+
+    try {
       const res = await fetch(`${API_BASE}/audio/${videoId}`);
       if (!res.ok) throw new Error(`Failed to download (${res.status})`);
 
@@ -116,9 +138,21 @@ export default function AddFromYoutubeModal() {
 
       await writeBlobToDirectory(dir, filename, blob);
       Spicetify.showNotification(`Saved ${filename}`, false);
+
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      setDownloadHistory((prev) => [
+        ...prev,
+        { title: safeTitle, time: elapsed, status: "success" },
+      ]);
     } catch (err) {
       console.error("download error", err);
       Spicetify.showNotification("Failed to save file", true);
+      setDownloadHistory((prev) => [
+        ...prev,
+        { title: safeTitle, status: "failed" },
+      ]);
+    } finally {
+      setCurrentDownload(null);
     }
   }
 
@@ -258,6 +292,42 @@ export default function AddFromYoutubeModal() {
     );
   }
 
+  if (downloadHistory.length > 0 || currentDownload)
+    return (
+      <div
+        style={{
+          padding: "10px",
+          borderRadius: "8px",
+          maxHeight: "200px",
+          overflowY: "auto",
+          fontSize: "13px",
+        }}
+      >
+        <p style={{ marginBottom: 10 }}>
+          You may close the tab, but please stay on the app as the download may
+          fail otherwise.
+        </p>
+        {downloadHistory.map((item, idx) => (
+          <div
+            key={idx}
+            style={{
+              color: item.status === "success" ? "#1db954" : "#ff4d4d",
+              marginBottom: "4px",
+            }}
+          >
+            {item.status === "success"
+              ? `Downloaded ${item.title} in ${item.time}s`
+              : `Failed to download ${item.title}`}
+          </div>
+        ))}
+        {currentDownload && (
+          <div style={{ color: "#aaa" }}>
+            Downloading: <strong>{currentDownload}</strong> for {downloadTime}s
+          </div>
+        )}
+      </div>
+    );
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
       <label
@@ -340,8 +410,6 @@ export default function AddFromYoutubeModal() {
               dir = await pickDownloadFolder();
               if (!dir) return; // user cancelled
             }
-
-            Spicetify.PopupModal.hide();
 
             // start downloads using the chosen dir (no further prompts)
             if (urlType === "video" && videoDetails?.id) {
