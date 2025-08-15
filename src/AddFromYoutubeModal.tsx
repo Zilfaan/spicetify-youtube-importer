@@ -6,6 +6,7 @@ import {
   isValidYouTubeUrl,
 } from "./utils";
 import SpiceSpinner from "./types/SpiceSpinner";
+import Tutorial from "./Tutorial";
 
 export default function AddFromYoutubeModal() {
   // States
@@ -290,6 +291,10 @@ export default function AddFromYoutubeModal() {
         </div>
       </div>
     );
+  }
+
+  if (!Spicetify.LocalStorage.get("youtubeDLTutCompleted")) {
+    return <Tutorial />;
   }
 
   if (downloadHistory.length > 0 || currentDownload)
