@@ -26,9 +26,9 @@
     b,
     g,
     T,
-    v,
-    h;
-  function B() {
+    h,
+    v;
+  function z() {
     var e = 2 * Math.PI * 23.25,
       t = 0.25 * e;
     return b.default.createElement(
@@ -95,22 +95,22 @@
   }
   function w() {
     let [r, t] = (0, C.useState)(""),
-      [e, l] = (0, C.useState)(null),
-      [o, a] = (0, C.useState)("invalid"),
-      [i, n] = (0, C.useState)(null),
+      [e, o] = (0, C.useState)(null),
+      [i, a] = (0, C.useState)("invalid"),
+      [n, l] = (0, C.useState)(null),
       [s, d] = (0, C.useState)([]),
       [c, u] = (0, C.useState)(new Set()),
       [f, p] = (0, C.useState)(!1),
       [m, y] = (0, C.useState)(!1),
       [b, g] = (0, C.useState)(null),
-      [v, h] = (0, C.useState)(0),
+      [h, v] = (0, C.useState)(0),
       [w, x] = (0, C.useState)([]),
       [E, S] =
         ((0, C.useEffect)(() => {
           if (b) {
             let e = Date.now(),
               t = setInterval(() => {
-                h(Math.floor((Date.now() - e) / 1e3));
+                v(Math.floor((Date.now() - e) / 1e3));
               }, 1e3);
             return () => clearInterval(t);
           }
@@ -121,7 +121,7 @@
       r = r || E;
       if (!r) throw new Error("No download directory provided");
       let t = (l || e).replace(/[\/\\?%*:|"<>]/g, "_");
-      g(t), h(0);
+      g(t), v(0);
       var o,
         i,
         n = Date.now();
@@ -152,24 +152,39 @@
     return (
       (0, C.useEffect)(() => {
         var e;
-        l(null),
+        o(null),
           d([]),
           u(new Set()),
-          n(null),
+          l(null),
           M(r)
             ? N(r)
               ? (a("playlist"),
                 (e = O(r)) &&
                   (async (e) => {
+                    let t = [];
                     try {
-                      p(!0), d([]), l(null);
-                      var t = await fetch(k + "/playlist/" + e);
-                      if (!t.ok) throw new Error("HTTP error! " + t.status);
-                      var a = await t.json();
-                      d(a || []);
+                      p(!0), d([]), o(null);
+                      var a = await fetch(k + "/playlist/" + e);
+                      if (!a.ok) throw new Error("HTTP error! " + a.status);
+                      var l = await a.json(),
+                        r = l.filter(
+                          (e) =>
+                            !(
+                              5 < parseInt(e.duration.split(":")[0]) &&
+                              (t.push(e.id), 1)
+                            )
+                        );
+                      0 < t.length &&
+                        o(
+                          "Hid " +
+                            t.length +
+                            " videos which exceeded the 5 minute limit."
+                        ),
+                        console.log(l),
+                        d(r || []);
                     } catch (e) {
                       console.error("Error fetching playlist info:", e),
-                        l("Failed to fetch playlist details");
+                        o("Failed to fetch playlist details");
                     } finally {
                       p(!1);
                     }
@@ -178,14 +193,16 @@
                 (e = _(r)) &&
                   (async (e) => {
                     try {
-                      p(!0), n(null), l(null);
+                      p(!0), l(null), o(null);
                       var t = await fetch(k + "/video/" + e);
                       if (!t.ok) throw new Error("HTTP error! " + t.status);
                       var a = await t.json();
-                      n(a);
+                      5 < parseInt(a.duration.split(":")[0])
+                        ? o("Video " + e + " is too long")
+                        : l(a);
                     } catch (e) {
                       console.error("Error fetching video info:", e),
-                        l("Failed to fetch video details");
+                        o("Failed to fetch video details");
                     } finally {
                       p(!1);
                     }
@@ -235,7 +252,7 @@
                   "Downloading: ",
                   C.default.createElement("strong", null, b),
                   " for ",
-                  v,
+                  h,
                   "s"
                 )
             )
@@ -278,9 +295,9 @@
                   boxSizing: "border-box",
                 },
               }),
-              "playlist" === o
+              "playlist" === i
                 ? f
-                  ? C.default.createElement(B, null)
+                  ? C.default.createElement(z, null)
                   : C.default.createElement(
                       "div",
                       null,
@@ -368,10 +385,10 @@
                         })
                       )
                     )
-                : "video" === o
+                : "video" === i
                 ? f
-                  ? C.default.createElement(B, null)
-                  : i
+                  ? C.default.createElement(z, null)
+                  : n
                   ? C.default.createElement(
                       "div",
                       {
@@ -385,24 +402,24 @@
                         src:
                           null ==
                           (R =
-                            null == (R = null == i ? void 0 : i.thumbnails)
+                            null == (R = null == n ? void 0 : n.thumbnails)
                               ? void 0
                               : R[0])
                             ? void 0
                             : R.url,
-                        alt: null == i ? void 0 : i.title,
+                        alt: null == n ? void 0 : n.title,
                         width: 120,
                         height: 67,
                       }),
                       C.default.createElement(
                         "div",
                         null,
-                        C.default.createElement("h4", null, i.title),
+                        C.default.createElement("h4", null, n.title),
                         C.default.createElement(
                           "p",
                           null,
                           "Duration: ",
-                          i.duration
+                          n.duration
                         )
                       )
                     )
@@ -434,14 +451,16 @@
                         backgroundColor: "var(--spice-button, #1db954)",
                         color: "var(--spice-text)",
                         transition: "all",
-                        cursor: i || 0 < c.size ? "pointer" : "not-allowed",
-                        opacity: i || 0 < c.size ? 1 : 0.8,
+                        cursor: n || 0 < c.size ? "pointer" : "not-allowed",
+                        opacity: n || 0 < c.size ? 1 : 0.8,
                       },
-                      m ? { filter: "brightness(0.85)" } : {}
+                      m && (n || 0 < c.size)
+                        ? { filter: "brightness(0.85)" }
+                        : {}
                     ),
                     onClick: async () => {
                       if (r.trim())
-                        if ("playlist" === o && 0 === c.size)
+                        if ("playlist" === i && 0 === c.size)
                           Spicetify.showNotification(
                             "Please select at least one video!",
                             !0
@@ -465,9 +484,9 @@
                               }
                             })())
                           )
-                            if ("video" === o && null != i && i.id)
-                              await L(i.id, i.title, e);
-                            else if ("playlist" === o) {
+                            if ("video" === i && null != n && n.id)
+                              await L(n.id, n.title, e);
+                            else if ("playlist" === i) {
                               var t,
                                 a,
                                 l = e || E;
@@ -719,14 +738,14 @@
           )
         )
       )),
-    (v = {
+    (h = {
       "--box-padding-block-start": "2px",
       "--box-padding-block-end": "2px",
       "--box-padding-inline-start": "calc(var(--encore-spacing-tighter) - 4px)",
       "--box-padding-inline-end": "var(--encore-spacing-tighter)",
       "--box-min-block-size": "56px",
     }),
-    (h = () => {
+    (v = () => {
       let [e, t] = (0, m.useState)(!1);
       return m.default.createElement(
         "button",
@@ -745,7 +764,7 @@
           {
             className:
               "e-91000-box e-91000-baseline e-91000-box--naked e-91000-box--browser-default-focus e-91000-box--padding-custom e-91000-box--min-size e-91000-Box-sc-8t9c76-0 Box-group-naked-listRow-hasLeadingOrMedia-minBlockSize_56px",
-            style: v,
+            style: h,
           },
           m.default.createElement(
             "div",
@@ -840,7 +859,7 @@
           (e.id = "spicetify-youtube-menuitem"),
           t.appendChild(e),
           Spicetify.ReactDOM.createRoot(e).render(
-            p.default.createElement(h, null)
+            p.default.createElement(v, null)
           ));
       }).observe(document.body, { childList: !0, subtree: !0 }),
         (Spicetify.SVGIcons.youtube = `
