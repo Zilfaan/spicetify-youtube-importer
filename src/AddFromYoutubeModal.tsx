@@ -56,7 +56,12 @@ export default function AddFromYoutubeModal() {
       const res = await fetch(`${API_BASE}/video/${videoId}`);
       if (!res.ok) throw new Error(`HTTP error! ${res.status}`);
       const data = await res.json();
-      setVideoDetails(data);
+      // Ensure video duration is less than 5 minutes
+      if (parseInt(data.duration.split(":")[0]) > 5) {
+        setError("Video " + videoId + " is too long");
+      } else {
+        setVideoDetails(data);
+      }
     } catch (err) {
       console.error("Error fetching video info:", err);
       setError("Failed to fetch video details");
@@ -66,6 +71,7 @@ export default function AddFromYoutubeModal() {
   }
 
   async function fetchPlaylistInfo(playlistId: string) {
+    const hiddenVids = [];
     try {
       setIsLoading(true);
       setPlaylistVideos([]);
@@ -74,7 +80,26 @@ export default function AddFromYoutubeModal() {
       const res = await fetch(`${API_BASE}/playlist/${playlistId}`);
       if (!res.ok) throw new Error(`HTTP error! ${res.status}`);
       const data = await res.json();
-      setPlaylistVideos(data || []);
+
+      const filteredVideos = data.filter(
+        (video: { duration: string; id: string }) => {
+          // Remove videos which exceed duration limit of 5 minutes
+          if (parseInt(video.duration.split(":")[0]) > 5) {
+            hiddenVids.push(video.id);
+            return false; // Remove from playlist
+          }
+          return true;
+        }
+      );
+      if (hiddenVids.length > 0)
+        setError(
+          "Hid " +
+            hiddenVids.length +
+            " videos which exceeded the 5 minute limit."
+        );
+      console.log(data);
+
+      setPlaylistVideos(filteredVideos || []);
     } catch (err) {
       console.error("Error fetching playlist info:", err);
       setError("Failed to fetch playlist details");
