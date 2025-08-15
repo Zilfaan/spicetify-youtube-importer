@@ -1,10 +1,19 @@
 export const isPlaylist = (url: string): boolean => {
   try {
     const parsedUrl = new URL(url);
-    return (
-      parsedUrl.searchParams.has("list") &&
-      parsedUrl.searchParams.get("list")!.length > 0
-    );
+    const listParam = parsedUrl.searchParams.get("list");
+
+    if (!listParam || listParam.length === 0) {
+      return false;
+    }
+
+    // Exclude radios as we cant extract details from them
+    const isRadio = listParam.startsWith("RD");
+    if (isRadio) {
+      return false;
+    }
+
+    return true;
   } catch (e) {
     return false;
   }
