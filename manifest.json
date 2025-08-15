@@ -1,0 +1,8 @@
+{
+  "name": "Youtube importer",
+  "description": "Download songs from youtube directly on the spotify client.",
+  "preview": "docs/preview.png",
+  "main": "dist/spicetify-youtube-importer.js",
+  "readme": "README.md",
+  "authors": [{ "name": "Zilfaan", "url": "https://github.com/Zilfaan" }]
+}
