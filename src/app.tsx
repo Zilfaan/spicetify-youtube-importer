@@ -41,12 +41,12 @@ export default function app() {
 `;
 
   // Add menu entry to normal context menus
-  const myItem = new Spicetify.ContextMenu.Item(
+  const item = new Spicetify.ContextMenu.Item(
     "Import from YouTube",
     launchYouTubeImport,
     undefined,
     "youtube" as Spicetify.Icon
   );
 
-  myItem.register();
+  item.register();
 }

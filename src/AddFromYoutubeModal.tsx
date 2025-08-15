@@ -394,7 +394,9 @@ export default function AddFromYoutubeModal() {
                 ? "pointer"
                 : "not-allowed",
             opacity: videoDetails || selectedVideoIds.size > 0 ? 1 : 0.8,
-            ...(submitHovered ? { filter: "brightness(0.85)" } : {}),
+            ...(submitHovered && (videoDetails || selectedVideoIds.size > 0)
+              ? { filter: "brightness(0.85)" }
+              : {}),
           }}
           onClick={async () => {
             // This click is the user activation that allows showDirectoryPicker.
