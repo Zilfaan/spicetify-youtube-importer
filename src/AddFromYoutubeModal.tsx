@@ -24,7 +24,7 @@ export default function AddFromYoutubeModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitHovered, setSubmitHovered] = useState(false);
 
-  // Array of download times
+  // Array of current videos downloading parallelly
   const [currentDownloads, setCurrentDownloads] = useState<
     { title: string; startTime: number }[]
   >([]);
@@ -49,6 +49,13 @@ export default function AddFromYoutubeModal() {
 
   const API_BASE = "https://sc-youtube-api-production.up.railway.app";
 
+  // Check if video duration less than 5 minutes
+  const clampDuration = (duration: string) => {
+    const sections = duration.split(":");
+    if (sections.length > 2 || parseInt(sections[0]) > 5) return true;
+    return false;
+  };
+
   // Functions to fetch data from backend api
   async function fetchVideoInfo(videoId: string) {
     try {
@@ -60,7 +67,7 @@ export default function AddFromYoutubeModal() {
       if (!res.ok) throw new Error(`HTTP error! ${res.status}`);
       const data = await res.json();
       // Ensure video duration is less than 5 minutes
-      if (parseInt(data.duration.split(":")[0]) > 5) {
+      if (clampDuration(data.duration)) {
         setError("Video " + videoId + " is too long");
       } else {
         setVideoDetails(data);
@@ -87,7 +94,7 @@ export default function AddFromYoutubeModal() {
       const filteredVideos = data.filter(
         (video: { duration: string; id: string }) => {
           // Remove videos which exceed duration limit of 5 minutes
-          if (parseInt(video.duration.split(":")[0]) > 5) {
+          if (clampDuration(video.duration)) {
             hiddenVids.push(video.id);
             return false; // Remove from playlist
           }
