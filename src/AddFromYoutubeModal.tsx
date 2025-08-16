@@ -24,21 +24,24 @@ export default function AddFromYoutubeModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [submitHovered, setSubmitHovered] = useState(false);
 
-  const [currentDownload, setCurrentDownload] = useState<string | null>(null);
-  const [downloadTime, setDownloadTime] = useState<number>(0);
+  // Array of download times
+  const [currentDownloads, setCurrentDownloads] = useState<
+    { title: string; startTime: number }[]
+  >([]);
+
   const [downloadHistory, setDownloadHistory] = useState<
     { title: string; time?: number; status: "success" | "failed" }[]
   >([]);
 
-  // Timer effect
+  const [, forceUpdate] = useState(0);
+
+  // Global timer to trigger rerenders every second
   useEffect(() => {
-    if (!currentDownload) return;
-    const start = Date.now();
     const interval = setInterval(() => {
-      setDownloadTime(Math.floor((Date.now() - start) / 1000));
+      forceUpdate((x) => x + 1); // force rerender to update time display
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentDownload]);
+  }, []);
 
   // Download directory handle
   const [downloadDir, setDownloadDir] =
@@ -97,7 +100,6 @@ export default function AddFromYoutubeModal() {
             hiddenVids.length +
             " videos which exceeded the 5 minute limit."
         );
-      console.log(data);
 
       setPlaylistVideos(filteredVideos || []);
     } catch (err) {
@@ -143,10 +145,8 @@ export default function AddFromYoutubeModal() {
     if (!dir) throw new Error("No download directory provided");
 
     const safeTitle = (title || videoId).replace(/[\/\\?%*:|"<>]/g, "_");
-    setCurrentDownload(safeTitle);
-    setDownloadTime(0);
-
     const startTime = Date.now();
+    setCurrentDownloads((prev) => [...prev, { title: safeTitle, startTime }]);
 
     try {
       const res = await fetch(`${API_BASE}/audio/${videoId}`);
@@ -178,24 +178,34 @@ export default function AddFromYoutubeModal() {
         { title: safeTitle, status: "failed" },
       ]);
     } finally {
-      setCurrentDownload(null);
+      setCurrentDownloads((prev) => prev.filter((d) => d.title !== safeTitle));
     }
   }
 
-  // Download each playlist item individually
   async function downloadSelectedVideos(dirParam?: FileSystemDirectoryHandle) {
     const dir = dirParam || downloadDir;
     if (!dir) throw new Error("No download dir");
 
-    for (const vid of playlistVideos.filter((v) =>
+    // Filter and download only selected videos
+    const selectedVideos = playlistVideos.filter((v) =>
       selectedVideoIds.has(v.id)
-    )) {
-      // sequentially download the mp3 files for the selected videos
-      await downloadVideoById(
-        vid.id,
-        typeof vid.title === "string" ? vid.title : vid.title?.text,
-        dir
+    );
+
+    // Download videos in batches of 8 parallelly, downloading all videos parallelly can cause failures
+    const batchSize = 8;
+    for (let i = 0; i < selectedVideos.length; i += batchSize) {
+      const batch = selectedVideos.slice(i, i + batchSize);
+
+      const batchPromises = batch.map((vid) =>
+        downloadVideoById(
+          vid.id,
+          typeof vid.title === "string" ? vid.title : vid.title?.text,
+          dir
+        )
       );
+
+      // Wait for this batch to finish before starting the next one
+      await Promise.all(batchPromises);
     }
   }
 
@@ -322,7 +332,7 @@ export default function AddFromYoutubeModal() {
     return <Tutorial />;
   }
 
-  if (downloadHistory.length > 0 || currentDownload)
+  if (downloadHistory.length > 0 || currentDownloads.length > 0)
     return (
       <div
         style={{
@@ -337,6 +347,8 @@ export default function AddFromYoutubeModal() {
           You may close the tab, but please stay on the app as the download may
           fail otherwise.
         </p>
+
+        {/* History of completed downloads */}
         {downloadHistory.map((item, idx) => (
           <div
             key={idx}
@@ -350,11 +362,16 @@ export default function AddFromYoutubeModal() {
               : `Failed to download ${item.title}`}
           </div>
         ))}
-        {currentDownload && (
-          <div style={{ color: "#aaa" }}>
-            Downloading: <strong>{currentDownload}</strong> for {downloadTime}s
-          </div>
-        )}
+
+        {/* Currently active downloads */}
+        {currentDownloads.map((item, idx) => {
+          const timeElapsed = Math.floor((Date.now() - item.startTime) / 1000);
+          return (
+            <div key={`active-${idx}`} style={{ color: "#aaa" }}>
+              Downloading: <strong>{item.title}</strong> for {timeElapsed}s
+            </div>
+          );
+        })}
       </div>
     );
 
