@@ -20,12 +20,12 @@
     y,
     C,
     N,
+    T,
     M,
     _,
-    O,
     b,
     g,
-    T,
+    O,
     h,
     v;
   function z() {
@@ -94,39 +94,40 @@
     );
   }
   function w() {
-    let [r, t] = (0, C.useState)(""),
-      [e, o] = (0, C.useState)(null),
-      [i, a] = (0, C.useState)("invalid"),
-      [n, l] = (0, C.useState)(null),
+    let [t, a] = (0, C.useState)(""),
+      [e, r] = (0, C.useState)(null),
+      [o, l] = (0, C.useState)("invalid"),
+      [i, n] = (0, C.useState)(null),
       [s, d] = (0, C.useState)([]),
       [c, u] = (0, C.useState)(new Set()),
       [f, p] = (0, C.useState)(!1),
       [m, y] = (0, C.useState)(!1),
-      [b, g] = (0, C.useState)(null),
-      [h, v] = (0, C.useState)(0),
-      [w, x] = (0, C.useState)([]),
-      [E, S] =
+      [b, g] = (0, C.useState)([]),
+      [h, v] = (0, C.useState)([]),
+      [, w] = (0, C.useState)(0),
+      [x, E] =
         ((0, C.useEffect)(() => {
-          if (b) {
-            let e = Date.now(),
-              t = setInterval(() => {
-                v(Math.floor((Date.now() - e) / 1e3));
-              }, 1e3);
-            return () => clearInterval(t);
-          }
-        }, [b]),
+          let e = setInterval(() => {
+            w((e) => e + 1);
+          }, 1e3);
+          return () => clearInterval(e);
+        }, []),
         (0, C.useState)(null)),
-      k = "https://sc-youtube-api-production.up.railway.app";
+      S = "https://sc-youtube-api-production.up.railway.app",
+      k = (e) => {
+        e = e.split(":");
+        return 2 < e.length || 5 < parseInt(e[0]);
+      };
     async function L(e, l, r) {
-      r = r || E;
-      if (!r) throw new Error("No download directory provided");
-      let t = (l || e).replace(/[\/\\?%*:|"<>]/g, "_");
-      g(t), v(0);
       var o,
         i,
+        r = r || x;
+      if (!r) throw new Error("No download directory provided");
+      let t = (l || e).replace(/[\/\\?%*:|"<>]/g, "_"),
         n = Date.now();
+      g((e) => [...e, { title: t, startTime: n }]);
       try {
-        var s = await fetch(k + "/audio/" + e);
+        var s = await fetch(S + "/audio/" + e);
         if (!s.ok) throw new Error(`Failed to download (${s.status})`);
         let t = l || e;
         var d = (t = t.replace(/[\/\\?%*:|"<>]/g, "_")) + ` [${e}].mp3`,
@@ -140,80 +141,72 @@
           await o.close(),
           Spicetify.showNotification("Saved " + d, !1);
         let a = Math.floor((Date.now() - n) / 1e3);
-        x((e) => [...e, { title: t, time: a, status: "success" }]);
+        v((e) => [...e, { title: t, time: a, status: "success" }]);
       } catch (e) {
         console.error("download error", e),
           Spicetify.showNotification("Failed to save file", !0),
-          x((e) => [...e, { title: t, status: "failed" }]);
+          v((e) => [...e, { title: t, status: "failed" }]);
       } finally {
-        g(null);
+        g((e) => e.filter((e) => e.title !== t));
       }
     }
     return (
       (0, C.useEffect)(() => {
         var e;
-        o(null),
+        r(null),
           d([]),
           u(new Set()),
-          l(null),
-          M(r)
-            ? N(r)
-              ? (a("playlist"),
-                (e = O(r)) &&
+          n(null),
+          T(t)
+            ? N(t)
+              ? (l("playlist"),
+                (e = _(t)) &&
                   (async (e) => {
                     let t = [];
                     try {
-                      p(!0), d([]), o(null);
-                      var a = await fetch(k + "/playlist/" + e);
+                      p(!0), d([]), r(null);
+                      var a = await fetch(S + "/playlist/" + e);
                       if (!a.ok) throw new Error("HTTP error! " + a.status);
-                      var l = await a.json(),
-                        r = l.filter(
-                          (e) =>
-                            !(
-                              5 < parseInt(e.duration.split(":")[0]) &&
-                              (t.push(e.id), 1)
-                            )
-                        );
+                      var l = (await a.json()).filter(
+                        (e) => !k(e.duration) || (t.push(e.id), !1)
+                      );
                       0 < t.length &&
-                        o(
+                        r(
                           "Hid " +
                             t.length +
                             " videos which exceeded the 5 minute limit."
                         ),
-                        console.log(l),
-                        d(r || []);
+                        d(l || []);
                     } catch (e) {
                       console.error("Error fetching playlist info:", e),
-                        o("Failed to fetch playlist details");
+                        r("Failed to fetch playlist details");
                     } finally {
                       p(!1);
                     }
                   })(e))
-              : (a("video"),
-                (e = _(r)) &&
+              : (l("video"),
+                (e = M(t)) &&
                   (async (e) => {
                     try {
-                      p(!0), l(null), o(null);
-                      var t = await fetch(k + "/video/" + e);
+                      p(!0), n(null), r(null);
+                      var t = await fetch(S + "/video/" + e);
                       if (!t.ok) throw new Error("HTTP error! " + t.status);
                       var a = await t.json();
-                      5 < parseInt(a.duration.split(":")[0])
-                        ? o("Video " + e + " is too long")
-                        : l(a);
+                      k(a.duration) ? r("Video " + e + " is too long") : n(a);
                     } catch (e) {
                       console.error("Error fetching video info:", e),
-                        o("Failed to fetch video details");
+                        r("Failed to fetch video details");
                     } finally {
                       p(!1);
                     }
                   })(e))
-            : a("invalid");
-      }, [r]),
+            : l("invalid");
+      }, [t]),
       (0, C.useEffect)(() => {
         u(new Set());
       }, [s]),
       Spicetify.LocalStorage.get("youtubeDLTutCompleted")
-        ? 0 < w.length || b
+        ? 0 < h.length || 0 < b.length
           ? C.default.createElement(
               "div",
               {
@@ -230,7 +223,7 @@
                 { style: { marginBottom: 10 } },
                 "You may close the tab, but please stay on the app as the download may fail otherwise."
               ),
-              w.map((e, t) =>
+              h.map((e, t) =>
                 C.default.createElement(
                   "div",
                   {
@@ -245,16 +238,18 @@
                     : "Failed to download " + e.title
                 )
               ),
-              b &&
-                C.default.createElement(
+              b.map((e, t) => {
+                var a = Math.floor((Date.now() - e.startTime) / 1e3);
+                return C.default.createElement(
                   "div",
-                  { style: { color: "#aaa" } },
+                  { key: "active-" + t, style: { color: "#aaa" } },
                   "Downloading: ",
-                  C.default.createElement("strong", null, b),
+                  C.default.createElement("strong", null, e.title),
                   " for ",
-                  h,
+                  a,
                   "s"
-                )
+                );
+              })
             )
           : C.default.createElement(
               "div",
@@ -281,8 +276,8 @@
               C.default.createElement("input", {
                 type: "text",
                 placeholder: "Paste YouTube link...",
-                value: r,
-                onChange: (e) => t(e.target.value),
+                value: t,
+                onChange: (e) => a(e.target.value),
                 style: {
                   padding: "10px 12px",
                   borderRadius: "6px",
@@ -295,7 +290,7 @@
                   boxSizing: "border-box",
                 },
               }),
-              "playlist" === i
+              "playlist" === o
                 ? f
                   ? C.default.createElement(z, null)
                   : C.default.createElement(
@@ -385,10 +380,10 @@
                         })
                       )
                     )
-                : "video" === i
+                : "video" === o
                 ? f
                   ? C.default.createElement(z, null)
-                  : n
+                  : i
                   ? C.default.createElement(
                       "div",
                       {
@@ -402,24 +397,24 @@
                         src:
                           null ==
                           (R =
-                            null == (R = null == n ? void 0 : n.thumbnails)
+                            null == (R = null == i ? void 0 : i.thumbnails)
                               ? void 0
                               : R[0])
                             ? void 0
                             : R.url,
-                        alt: null == n ? void 0 : n.title,
+                        alt: null == i ? void 0 : i.title,
                         width: 120,
                         height: 67,
                       }),
                       C.default.createElement(
                         "div",
                         null,
-                        C.default.createElement("h4", null, n.title),
+                        C.default.createElement("h4", null, i.title),
                         C.default.createElement(
                           "p",
                           null,
                           "Duration: ",
-                          n.duration
+                          i.duration
                         )
                       )
                     )
@@ -438,7 +433,7 @@
                   "button",
                   {
                     type: "button",
-                    disabled: !M(r),
+                    disabled: !T(t),
                     onMouseOver: () => y(!0),
                     onMouseLeave: () => y(!1),
                     style: A(
@@ -451,28 +446,28 @@
                         backgroundColor: "var(--spice-button, #1db954)",
                         color: "var(--spice-text)",
                         transition: "all",
-                        cursor: n || 0 < c.size ? "pointer" : "not-allowed",
-                        opacity: n || 0 < c.size ? 1 : 0.8,
+                        cursor: i || 0 < c.size ? "pointer" : "not-allowed",
+                        opacity: i || 0 < c.size ? 1 : 0.8,
                       },
-                      m && (n || 0 < c.size)
+                      m && (i || 0 < c.size)
                         ? { filter: "brightness(0.85)" }
                         : {}
                     ),
                     onClick: async () => {
-                      if (r.trim())
-                        if ("playlist" === i && 0 === c.size)
+                      if (t.trim())
+                        if ("playlist" === o && 0 === c.size)
                           Spicetify.showNotification(
                             "Please select at least one video!",
                             !0
                           );
                         else {
-                          let e = E;
+                          let e = x;
                           if (
                             e ||
                             (e = await (async () => {
                               try {
                                 var e = await window.showDirectoryPicker();
-                                return S(e), e;
+                                return E(e), e;
                               } catch (e) {
                                 return (
                                   console.warn(
@@ -484,23 +479,30 @@
                               }
                             })())
                           )
-                            if ("video" === i && null != n && n.id)
-                              await L(n.id, n.title, e);
-                            else if ("playlist" === i) {
-                              var t,
-                                a,
-                                l = e || E;
-                              if (!l) throw new Error("No download dir");
-                              for (a of s.filter((e) => c.has(e.id)))
-                                await L(
-                                  a.id,
-                                  "string" == typeof a.title
-                                    ? a.title
-                                    : null == (t = a.title)
-                                    ? void 0
-                                    : t.text,
-                                  l
-                                );
+                            if ("video" === o && null != i && i.id)
+                              await L(i.id, i.title, e);
+                            else if ("playlist" === o) {
+                              var a = e;
+                              let t = a || x;
+                              if (!t) throw new Error("No download dir");
+                              var l = s.filter((e) => c.has(e.id));
+                              for (let e = 0; e < l.length; e += 8) {
+                                var r = l
+                                  .slice(e, e + 8)
+                                  .map((e) =>
+                                    L(
+                                      e.id,
+                                      "string" == typeof e.title
+                                        ? e.title
+                                        : null == (e = e.title)
+                                        ? void 0
+                                        : e.text,
+                                      t
+                                    )
+                                  );
+                                await Promise.all(r);
+                              }
+                              return void (await 0);
                             }
                         }
                       else
@@ -514,7 +516,7 @@
                 )
               )
             )
-        : C.default.createElement(T, null)
+        : C.default.createElement(O, null)
     );
     var R;
   }
@@ -602,7 +604,7 @@
         return !1;
       }
     }),
-    (M = (e) => {
+    (T = (e) => {
       try {
         var t = new URL(e),
           a = t.hostname.toLowerCase();
@@ -621,17 +623,17 @@
         return !1;
       }
     }),
-    (_ = (e) => {
+    (M = (e) => {
       e = e.match(/(?:v=|\/)([0-9A-Za-z_-]{11})(?:[?&]|$)/);
       return e ? e[1] : null;
     }),
-    (O = (e) => {
+    (_ = (e) => {
       e = e.match(/[?&]list=([a-zA-Z0-9_-]+)/);
       return e ? e[1] : null;
     }),
     (b = a(f())),
     (g = a(f())),
-    (T = () =>
+    (O = () =>
       g.default.createElement(
         "div",
         {
