@@ -1,6 +1,10 @@
 import React from "react";
 import MenuItem from "./AddMenuItem";
 import launchYouTubeImport from "./launchYouTubeImport";
+import registerSettings from "./registerSettings";
+
+// Register settings for the extension
+export const settings = registerSettings();
 
 export default function app() {
   // Add entry to create context menu
