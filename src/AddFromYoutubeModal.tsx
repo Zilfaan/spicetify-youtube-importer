@@ -7,6 +7,7 @@ import {
 } from "./utils";
 import SpiceSpinner from "./types/SpiceSpinner";
 import Tutorial from "./Tutorial";
+import { settings } from "./app";
 
 export default function AddFromYoutubeModal() {
   // States
@@ -47,7 +48,7 @@ export default function AddFromYoutubeModal() {
   const [downloadDir, setDownloadDir] =
     useState<FileSystemDirectoryHandle | null>(null);
 
-  const API_BASE = "https://sc-youtube-api-production.up.railway.app";
+  const API_BASE = settings.getFieldValue("backend-server");
 
   // Check if video duration less than 5 minutes
   const clampDuration = (duration: string) => {
@@ -198,21 +199,37 @@ export default function AddFromYoutubeModal() {
       selectedVideoIds.has(v.id)
     );
 
-    // Download videos in batches of 8 parallelly, downloading all videos parallelly can cause failures
-    const batchSize = 8;
-    for (let i = 0; i < selectedVideos.length; i += batchSize) {
-      const batch = selectedVideos.slice(i, i + batchSize);
+    const shouldDownloadParallelly = settings.getFieldValue(
+      "download-parallelly"
+    ) as boolean;
 
-      const batchPromises = batch.map((vid) =>
-        downloadVideoById(
+    if (shouldDownloadParallelly) {
+      // Download videos in batches parallelly, downloading all videos parallelly can cause failures
+      const batchSize = parseInt(settings.getFieldValue("batch-size"));
+      for (let i = 0; i < selectedVideos.length; i += batchSize) {
+        const batch = selectedVideos.slice(i, i + batchSize);
+
+        const batchPromises = batch.map((vid) =>
+          downloadVideoById(
+            vid.id,
+            typeof vid.title === "string" ? vid.title : vid.title?.text,
+            dir
+          )
+        );
+
+        // Wait for this batch to finish before starting the next one
+        await Promise.all(batchPromises);
+      }
+    } else {
+      // Download videos sequentially
+      for (const vid of selectedVideos) {
+        // sequentially download the mp3 files for the selected videos
+        await downloadVideoById(
           vid.id,
           typeof vid.title === "string" ? vid.title : vid.title?.text,
           dir
-        )
-      );
-
-      // Wait for this batch to finish before starting the next one
-      await Promise.all(batchPromises);
+        );
+      }
     }
   }
 
