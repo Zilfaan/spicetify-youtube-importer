@@ -1,37 +1,40 @@
 (async () => {
   for (; !Spicetify.React || !Spicetify.ReactDOM; )
     await new Promise((e) => setTimeout(e, 10));
-  var e,
-    t,
-    l,
+  var l,
+    r,
+    n,
     o,
     i,
-    n,
-    r,
     s,
     d,
-    c,
     u,
-    A,
-    a,
-    f,
-    p,
-    m,
-    y,
-    C,
+    c,
     N,
+    e,
+    t,
+    a,
+    p,
+    f,
+    m,
+    L,
     T,
-    M,
-    _,
-    b,
+    I,
+    R,
+    B,
     g,
-    O,
+    y,
+    D,
     h,
-    v;
-  function z() {
+    b,
+    v,
+    w,
+    x,
+    O;
+  function P() {
     var e = 2 * Math.PI * 23.25,
       t = 0.25 * e;
-    return b.default.createElement(
+    return g.default.createElement(
       "div",
       {
         role: "status",
@@ -44,7 +47,7 @@
           height: 32,
         },
       },
-      b.default.createElement(
+      g.default.createElement(
         "svg",
         {
           width: 32,
@@ -53,7 +56,7 @@
           style: { transform: "rotate(-90deg)" },
           "aria-hidden": "true",
         },
-        b.default.createElement("circle", {
+        g.default.createElement("circle", {
           cx: 25,
           cy: 25,
           r: 23.25,
@@ -61,7 +64,7 @@
           stroke: "rgba(255,255,255,0.08)",
           strokeWidth: 3.5,
         }),
-        b.default.createElement("circle", {
+        g.default.createElement("circle", {
           cx: 25,
           cy: 25,
           r: 23.25,
@@ -76,7 +79,7 @@
               "spice-rotate 1s linear infinite, spice-dash 1.5s ease-in-out infinite",
           },
         }),
-        b.default.createElement(
+        g.default.createElement(
           "style",
           null,
           `
@@ -93,121 +96,121 @@
       )
     );
   }
-  function w() {
-    let [t, a] = (0, C.useState)(""),
-      [e, r] = (0, C.useState)(null),
-      [o, l] = (0, C.useState)("invalid"),
-      [i, n] = (0, C.useState)(null),
-      [s, d] = (0, C.useState)([]),
-      [c, u] = (0, C.useState)(new Set()),
-      [f, p] = (0, C.useState)(!1),
-      [m, y] = (0, C.useState)(!1),
-      [b, g] = (0, C.useState)([]),
-      [h, v] = (0, C.useState)([]),
-      [, w] = (0, C.useState)(0),
+  function E() {
+    let [t, a] = (0, L.useState)(""),
+      [e, i] = (0, L.useState)(null),
+      [s, l] = (0, L.useState)("invalid"),
+      [d, r] = (0, L.useState)(null),
+      [u, n] = (0, L.useState)([]),
+      [c, o] = (0, L.useState)(new Set()),
+      [p, f] = (0, L.useState)(!1),
+      [m, g] = (0, L.useState)(!1),
+      [y, h] = (0, L.useState)([]),
+      [b, v] = (0, L.useState)([]),
+      [, w] = (0, L.useState)(0),
       [x, E] =
-        ((0, C.useEffect)(() => {
+        ((0, L.useEffect)(() => {
           let e = setInterval(() => {
             w((e) => e + 1);
           }, 1e3);
           return () => clearInterval(e);
         }, []),
-        (0, C.useState)(null)),
-      S = "https://sc-youtube-api-production.up.railway.app",
+        (0, L.useState)(null)),
+      S = O.getFieldValue("backend-server"),
       k = (e) => {
         e = e.split(":");
         return 2 < e.length || 5 < parseInt(e[0]);
       };
-    async function L(e, l, r) {
-      var o,
-        i,
-        r = r || x;
-      if (!r) throw new Error("No download directory provided");
+    async function C(e, l, i) {
+      var r,
+        n,
+        i = i || x;
+      if (!i) throw new Error("No download directory provided");
       let t = (l || e).replace(/[\/\\?%*:|"<>]/g, "_"),
-        n = Date.now();
-      g((e) => [...e, { title: t, startTime: n }]);
+        o = Date.now();
+      h((e) => [...e, { title: t, startTime: o }]);
       try {
         var s = await fetch(S + "/audio/" + e);
         if (!s.ok) throw new Error(`Failed to download (${s.status})`);
         let t = l || e;
         var d = (t = t.replace(/[\/\\?%*:|"<>]/g, "_")) + ` [${e}].mp3`,
-          c = await s.arrayBuffer(),
-          u = s.headers.get("Content-Type") || "audio/mpeg",
-          f = new Blob([c], { type: u });
-        (i = f),
-          await (o = await (
-            await (o = r).getFileHandle(d, { create: !0 })
-          ).createWritable()).write(i),
-          await o.close(),
+          u = await s.arrayBuffer(),
+          c = s.headers.get("Content-Type") || "audio/mpeg",
+          p = new Blob([u], { type: c });
+        (n = p),
+          await (r = await (
+            await (r = i).getFileHandle(d, { create: !0 })
+          ).createWritable()).write(n),
+          await r.close(),
           Spicetify.showNotification("Saved " + d, !1);
-        let a = Math.floor((Date.now() - n) / 1e3);
+        let a = Math.floor((Date.now() - o) / 1e3);
         v((e) => [...e, { title: t, time: a, status: "success" }]);
       } catch (e) {
         console.error("download error", e),
           Spicetify.showNotification("Failed to save file", !0),
           v((e) => [...e, { title: t, status: "failed" }]);
       } finally {
-        g((e) => e.filter((e) => e.title !== t));
+        h((e) => e.filter((e) => e.title !== t));
       }
     }
     return (
-      (0, C.useEffect)(() => {
+      (0, L.useEffect)(() => {
         var e;
-        r(null),
-          d([]),
-          u(new Set()),
-          n(null),
-          T(t)
-            ? N(t)
+        i(null),
+          n([]),
+          o(new Set()),
+          r(null),
+          I(t)
+            ? T(t)
               ? (l("playlist"),
-                (e = _(t)) &&
+                (e = B(t)) &&
                   (async (e) => {
                     let t = [];
                     try {
-                      p(!0), d([]), r(null);
+                      f(!0), n([]), i(null);
                       var a = await fetch(S + "/playlist/" + e);
                       if (!a.ok) throw new Error("HTTP error! " + a.status);
                       var l = (await a.json()).filter(
                         (e) => !k(e.duration) || (t.push(e.id), !1)
                       );
                       0 < t.length &&
-                        r(
+                        i(
                           "Hid " +
                             t.length +
                             " videos which exceeded the 5 minute limit."
                         ),
-                        d(l || []);
+                        n(l || []);
                     } catch (e) {
                       console.error("Error fetching playlist info:", e),
-                        r("Failed to fetch playlist details");
+                        i("Failed to fetch playlist details");
                     } finally {
-                      p(!1);
+                      f(!1);
                     }
                   })(e))
               : (l("video"),
-                (e = M(t)) &&
+                (e = R(t)) &&
                   (async (e) => {
                     try {
-                      p(!0), n(null), r(null);
+                      f(!0), r(null), i(null);
                       var t = await fetch(S + "/video/" + e);
                       if (!t.ok) throw new Error("HTTP error! " + t.status);
                       var a = await t.json();
-                      k(a.duration) ? r("Video " + e + " is too long") : n(a);
+                      k(a.duration) ? i("Video " + e + " is too long") : r(a);
                     } catch (e) {
                       console.error("Error fetching video info:", e),
-                        r("Failed to fetch video details");
+                        i("Failed to fetch video details");
                     } finally {
-                      p(!1);
+                      f(!1);
                     }
                   })(e))
             : l("invalid");
       }, [t]),
-      (0, C.useEffect)(() => {
-        u(new Set());
-      }, [s]),
+      (0, L.useEffect)(() => {
+        o(new Set());
+      }, [u]),
       Spicetify.LocalStorage.get("youtubeDLTutCompleted")
-        ? 0 < h.length || 0 < b.length
-          ? C.default.createElement(
+        ? 0 < b.length || 0 < y.length
+          ? L.default.createElement(
               "div",
               {
                 style: {
@@ -218,13 +221,13 @@
                   fontSize: "13px",
                 },
               },
-              C.default.createElement(
+              L.default.createElement(
                 "p",
                 { style: { marginBottom: 10 } },
                 "You may close the tab, but please stay on the app as the download may fail otherwise."
               ),
-              h.map((e, t) =>
-                C.default.createElement(
+              b.map((e, t) =>
+                L.default.createElement(
                   "div",
                   {
                     key: t,
@@ -238,20 +241,20 @@
                     : "Failed to download " + e.title
                 )
               ),
-              b.map((e, t) => {
+              y.map((e, t) => {
                 var a = Math.floor((Date.now() - e.startTime) / 1e3);
-                return C.default.createElement(
+                return L.default.createElement(
                   "div",
                   { key: "active-" + t, style: { color: "#aaa" } },
                   "Downloading: ",
-                  C.default.createElement("strong", null, e.title),
+                  L.default.createElement("strong", null, e.title),
                   " for ",
                   a,
                   "s"
                 );
               })
             )
-          : C.default.createElement(
+          : L.default.createElement(
               "div",
               {
                 style: {
@@ -260,7 +263,7 @@
                   gap: "12px",
                 },
               },
-              C.default.createElement(
+              L.default.createElement(
                 "label",
                 {
                   style: {
@@ -273,7 +276,7 @@
                 },
                 "YouTube URL:"
               ),
-              C.default.createElement("input", {
+              L.default.createElement("input", {
                 type: "text",
                 placeholder: "Paste YouTube link...",
                 value: t,
@@ -290,15 +293,15 @@
                   boxSizing: "border-box",
                 },
               }),
-              "playlist" === o
-                ? f
-                  ? C.default.createElement(z, null)
-                  : C.default.createElement(
+              "playlist" === s
+                ? p
+                  ? L.default.createElement(P, null)
+                  : L.default.createElement(
                       "div",
                       null,
-                      s.length &&
-                        C.default.createElement("h3", null, "Playlist"),
-                      C.default.createElement(
+                      u.length &&
+                        L.default.createElement("h3", null, "Playlist"),
+                      L.default.createElement(
                         "ul",
                         {
                           style: {
@@ -309,16 +312,16 @@
                             listStyle: "none",
                           },
                         },
-                        s.map((e, t) => {
+                        u.map((e, t) => {
                           var a = c.has(e.id);
-                          return C.default.createElement(
+                          return L.default.createElement(
                             "li",
                             {
                               key: t,
                               onClick: () => {
                                 var t;
                                 (t = e.id),
-                                  u((e) => {
+                                  o((e) => {
                                     e = new Set(e);
                                     return e.has(t) ? e.delete(t) : e.add(t), e;
                                   });
@@ -342,7 +345,7 @@
                                 userSelect: "none",
                               },
                             },
-                            C.default.createElement("img", {
+                            L.default.createElement("img", {
                               src:
                                 null ==
                                 (a =
@@ -357,7 +360,7 @@
                               height: 45,
                               style: { borderRadius: "6px", flexShrink: 0 },
                             }),
-                            C.default.createElement(
+                            L.default.createElement(
                               "span",
                               { style: { flex: 1, userSelect: "text" } },
                               "string" == typeof e.title
@@ -365,7 +368,7 @@
                                 : (null == (t = e.title) ? void 0 : t.text) ||
                                     "Untitled"
                             ),
-                            C.default.createElement(
+                            L.default.createElement(
                               "span",
                               {
                                 style: {
@@ -380,11 +383,11 @@
                         })
                       )
                     )
-                : "video" === o
-                ? f
-                  ? C.default.createElement(z, null)
-                  : i
-                  ? C.default.createElement(
+                : "video" === s
+                ? p
+                  ? L.default.createElement(P, null)
+                  : d
+                  ? L.default.createElement(
                       "div",
                       {
                         style: {
@@ -393,50 +396,50 @@
                           alignItems: "center",
                         },
                       },
-                      C.default.createElement("img", {
+                      L.default.createElement("img", {
                         src:
                           null ==
-                          (R =
-                            null == (R = null == i ? void 0 : i.thumbnails)
+                          (F =
+                            null == (F = null == d ? void 0 : d.thumbnails)
                               ? void 0
-                              : R[0])
+                              : F[0])
                             ? void 0
-                            : R.url,
-                        alt: null == i ? void 0 : i.title,
+                            : F.url,
+                        alt: null == d ? void 0 : d.title,
                         width: 120,
                         height: 67,
                       }),
-                      C.default.createElement(
+                      L.default.createElement(
                         "div",
                         null,
-                        C.default.createElement("h4", null, i.title),
-                        C.default.createElement(
+                        L.default.createElement("h4", null, d.title),
+                        L.default.createElement(
                           "p",
                           null,
                           "Duration: ",
-                          i.duration
+                          d.duration
                         )
                       )
                     )
                   : null
                 : null,
               e &&
-                C.default.createElement(
+                L.default.createElement(
                   "div",
                   { style: { color: "red", fontSize: "13px" } },
                   e
                 ),
-              C.default.createElement(
+              L.default.createElement(
                 "div",
                 { style: { display: "flex", justifyContent: "flex-end" } },
-                C.default.createElement(
+                L.default.createElement(
                   "button",
                   {
                     type: "button",
-                    disabled: !T(t),
-                    onMouseOver: () => y(!0),
-                    onMouseLeave: () => y(!1),
-                    style: A(
+                    disabled: !I(t),
+                    onMouseOver: () => g(!0),
+                    onMouseLeave: () => g(!1),
+                    style: N(
                       {
                         border: "none",
                         width: "13%",
@@ -446,25 +449,25 @@
                         backgroundColor: "var(--spice-button, #1db954)",
                         color: "var(--spice-text)",
                         transition: "all",
-                        cursor: i || 0 < c.size ? "pointer" : "not-allowed",
-                        opacity: i || 0 < c.size ? 1 : 0.8,
+                        cursor: d || 0 < c.size ? "pointer" : "not-allowed",
+                        opacity: d || 0 < c.size ? 1 : 0.8,
                       },
-                      m && (i || 0 < c.size)
+                      m && (d || 0 < c.size)
                         ? { filter: "brightness(0.85)" }
                         : {}
                     ),
                     onClick: async () => {
                       if (t.trim())
-                        if ("playlist" === o && 0 === c.size)
+                        if ("playlist" === s && 0 === c.size)
                           Spicetify.showNotification(
                             "Please select at least one video!",
                             !0
                           );
                         else {
-                          let e = x;
+                          let a = x;
                           if (
-                            e ||
-                            (e = await (async () => {
+                            a ||
+                            (a = await (async () => {
                               try {
                                 var e = await window.showDirectoryPicker();
                                 return E(e), e;
@@ -479,29 +482,43 @@
                               }
                             })())
                           )
-                            if ("video" === o && null != i && i.id)
-                              await L(i.id, i.title, e);
-                            else if ("playlist" === o) {
-                              var a = e;
-                              let t = a || x;
+                            if ("video" === s && null != d && d.id)
+                              await C(d.id, d.title, a);
+                            else if ("playlist" === s) {
+                              var l = a;
+                              let e,
+                                t = l || x;
                               if (!t) throw new Error("No download dir");
-                              var l = s.filter((e) => c.has(e.id));
-                              for (let e = 0; e < l.length; e += 8) {
-                                var r = l
-                                  .slice(e, e + 8)
-                                  .map((e) =>
-                                    L(
-                                      e.id,
-                                      "string" == typeof e.title
-                                        ? e.title
-                                        : null == (e = e.title)
-                                        ? void 0
-                                        : e.text,
-                                      t
-                                    )
+                              var i = u.filter((e) => c.has(e.id));
+                              if (O.getFieldValue("download-parallelly")) {
+                                var r = parseInt(O.getFieldValue("batch-size"));
+                                for (let e = 0; e < i.length; e += r) {
+                                  var n = i
+                                    .slice(e, e + r)
+                                    .map((e) =>
+                                      C(
+                                        e.id,
+                                        "string" == typeof e.title
+                                          ? e.title
+                                          : null == (e = e.title)
+                                          ? void 0
+                                          : e.text,
+                                        t
+                                      )
+                                    );
+                                  await Promise.all(n);
+                                }
+                              } else
+                                for (var o of i)
+                                  await C(
+                                    o.id,
+                                    "string" == typeof o.title
+                                      ? o.title
+                                      : null == (e = o.title)
+                                      ? void 0
+                                      : e.text,
+                                    t
                                   );
-                                await Promise.all(r);
-                              }
                               return void (await 0);
                             }
                         }
@@ -516,11 +533,11 @@
                 )
               )
             )
-        : C.default.createElement(O, null)
+        : L.default.createElement(D, null)
     );
-    var R;
+    var F;
   }
-  function x() {
+  function S() {
     var e = document.querySelector(
         'button.AIlmv6h8bR5NY5R0VceT[aria-label="Create"]'
       ),
@@ -539,7 +556,7 @@
           e instanceof HTMLElement &&
           e.click(),
         document.createElement("div"));
-    Spicetify.ReactDOM.createRoot(t).render(y.default.createElement(w, null)),
+    Spicetify.ReactDOM.createRoot(t).render(m.default.createElement(E, null)),
       Spicetify.PopupModal.display({
         title: "Import a Song or Playlist from Youtube",
         content: t,
@@ -547,56 +564,61 @@
       });
   }
   (l = Object.create),
-    (o = Object.defineProperty),
-    (i = Object.getOwnPropertyDescriptor),
-    (n = Object.getOwnPropertyNames),
-    (r = Object.getOwnPropertySymbols),
+    (r = Object.defineProperty),
+    (n = Object.getOwnPropertyDescriptor),
+    (o = Object.getOwnPropertyNames),
+    (i = Object.getOwnPropertySymbols),
     (s = Object.getPrototypeOf),
     (d = Object.prototype.hasOwnProperty),
-    (c = Object.prototype.propertyIsEnumerable),
-    (u = (e, t, a) =>
+    (u = Object.prototype.propertyIsEnumerable),
+    (c = (e, t, a) =>
       t in e
-        ? o(e, t, { enumerable: !0, configurable: !0, writable: !0, value: a })
+        ? r(e, t, { enumerable: !0, configurable: !0, writable: !0, value: a })
         : (e[t] = a)),
-    (A = (e, t) => {
-      for (var a in (t = t || {})) d.call(t, a) && u(e, a, t[a]);
-      if (r) for (var a of r(t)) c.call(t, a) && u(e, a, t[a]);
+    (N = (e, t) => {
+      for (var a in (t = t || {})) d.call(t, a) && c(e, a, t[a]);
+      if (i) for (var a of i(t)) u.call(t, a) && c(e, a, t[a]);
       return e;
     }),
-    (e = {
-      "external-global-plugin:react"(e, t) {
-        t.exports = Spicetify.React;
-      },
-    }),
-    (p = (a = (e, t, a) => (
+    (t = (e, t, a) => (
       (a = null != e ? l(s(e)) : {}),
-      ((t, a, l, r) => {
+      ((t, a, l, i) => {
         if ((a && "object" == typeof a) || "function" == typeof a)
-          for (let e of n(a))
+          for (let e of o(a))
             d.call(t, e) ||
               e === l ||
-              o(t, e, {
+              r(t, e, {
                 get: () => a[e],
-                enumerable: !(r = i(a, e)) || r.enumerable,
+                enumerable: !(i = n(a, e)) || i.enumerable,
               });
         return t;
       })(
         !t && e && e.__esModule
           ? a
-          : o(a, "default", { value: e, enumerable: !0 }),
+          : r(a, "default", { value: e, enumerable: !0 }),
         e
       )
-    ))(
-      (f = function () {
-        return (
-          t || (0, e[n(e)[0]])((t = { exports: {} }).exports, t), t.exports
-        );
-      })()
     )),
-    (m = a(f())),
-    (y = a(f())),
-    (C = a(f())),
-    (N = (e) => {
+    (a = (e = (e, t) =>
+      function () {
+        return (
+          t || (0, e[o(e)[0]])((t = { exports: {} }).exports, t), t.exports
+        );
+      })({
+      "external-global-plugin:react"(e, t) {
+        t.exports = Spicetify.React;
+      },
+    })),
+    (e = e({
+      "external-global-plugin:react-dom"(e, t) {
+        t.exports = Spicetify.ReactDOM;
+      },
+    })),
+    (p = t(a())),
+    (f = t(a())),
+    (m = t(a())),
+    (L = t(a())),
+    (T = (e) => {
       try {
         var t = new URL(e).searchParams.get("list");
         return t && 0 !== t.length ? !t.startsWith("RD") : !1;
@@ -604,7 +626,7 @@
         return !1;
       }
     }),
-    (T = (e) => {
+    (I = (e) => {
       try {
         var t = new URL(e),
           a = t.hostname.toLowerCase();
@@ -623,18 +645,18 @@
         return !1;
       }
     }),
-    (M = (e) => {
+    (R = (e) => {
       e = e.match(/(?:v=|\/)([0-9A-Za-z_-]{11})(?:[?&]|$)/);
       return e ? e[1] : null;
     }),
-    (_ = (e) => {
+    (B = (e) => {
       e = e.match(/[?&]list=([a-zA-Z0-9_-]+)/);
       return e ? e[1] : null;
     }),
-    (b = a(f())),
-    (g = a(f())),
-    (O = () =>
-      g.default.createElement(
+    (g = t(a())),
+    (y = t(a())),
+    (D = () =>
+      y.default.createElement(
         "div",
         {
           style: {
@@ -644,7 +666,7 @@
             color: "var(--spice-text)",
           },
         },
-        g.default.createElement(
+        y.default.createElement(
           "div",
           {
             style: {
@@ -652,7 +674,7 @@
               boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
             },
           },
-          g.default.createElement(
+          y.default.createElement(
             "p",
             {
               style: {
@@ -662,18 +684,18 @@
               },
             },
             "1. Paste your YouTube video or playlist link in the search bar.",
-            g.default.createElement("br", null),
+            y.default.createElement("br", null),
             "2. Click ",
-            g.default.createElement("b", null, "Download"),
+            y.default.createElement("b", null, "Download"),
             " to start the process.",
-            g.default.createElement("br", null),
+            y.default.createElement("br", null),
             "3. Select a valid location to save the files to.",
-            g.default.createElement("br", null),
+            y.default.createElement("br", null),
             "4. Wait for the download(s) to finish — you'll see a notification when it's done.",
-            g.default.createElement("br", null),
+            y.default.createElement("br", null),
             "5. For playlists, you can select what videos to download, and it will sequentially download each of them."
           ),
-          g.default.createElement(
+          y.default.createElement(
             "div",
             {
               style: {
@@ -685,10 +707,10 @@
               },
             },
             "⚠️ If you get ",
-            g.default.createElement("code", null, "NaN:NaN"),
+            y.default.createElement("code", null, "NaN:NaN"),
             " for a video link, put the video into a playlist and use that playlist link instead."
           ),
-          g.default.createElement(
+          y.default.createElement(
             "div",
             {
               style: {
@@ -701,7 +723,7 @@
             },
             "💡 Stay tabbed in while downloading, and grant any permissions that are requested, Chromium limits file-saving without them."
           ),
-          g.default.createElement(
+          y.default.createElement(
             "div",
             {
               style: {
@@ -714,7 +736,7 @@
             },
             "✅ Make sure you have manually enabled Local Files in your spotify settings and added the location your downloading the songs to."
           ),
-          g.default.createElement(
+          y.default.createElement(
             "button",
             {
               onClick: () => {
@@ -747,12 +769,12 @@
       "--box-padding-inline-end": "var(--encore-spacing-tighter)",
       "--box-min-block-size": "56px",
     }),
-    (v = () => {
-      let [e, t] = (0, m.useState)(!1);
-      return m.default.createElement(
+    (b = () => {
+      let [e, t] = (0, f.useState)(!1);
+      return f.default.createElement(
         "button",
         {
-          onClick: x,
+          onClick: S,
           id: "spicetify-youtube-menuitem",
           className: "kLKq7fz4Llya50jObe9a",
           role: "menuitem",
@@ -761,32 +783,32 @@
           onMouseLeave: () => t(!1),
           "aria-describedby": "subtitle-global-create-youtube",
         },
-        m.default.createElement(
+        f.default.createElement(
           "div",
           {
             className:
               "e-91000-box e-91000-baseline e-91000-box--naked e-91000-box--browser-default-focus e-91000-box--padding-custom e-91000-box--min-size e-91000-Box-sc-8t9c76-0 Box-group-naked-listRow-hasLeadingOrMedia-minBlockSize_56px",
             style: h,
           },
-          m.default.createElement(
+          f.default.createElement(
             "div",
             { className: "Areas__HeaderSideArea-sc-8gfrea-1 HeaderSideArea" },
-            m.default.createElement(
+            f.default.createElement(
               "div",
               {
                 className:
                   "Areas__HeaderSideAreaFlexContainer-sc-8gfrea-2 HeaderSideAreaFlexContainer",
               },
-              m.default.createElement(
+              f.default.createElement(
                 "div",
                 {
                   className:
                     "Areas__InteractiveArea-sc-8gfrea-0 Areas__LeadingSlot-sc-8gfrea-6 bJSfgC hUkHtl",
                 },
-                m.default.createElement(
+                f.default.createElement(
                   "div",
                   { className: "uKWufPQjLFxGolUWWIqH" },
-                  m.default.createElement(
+                  f.default.createElement(
                     "svg",
                     {
                       xmlns: "http://www.w3.org/2000/svg",
@@ -799,7 +821,7 @@
                       className: "bi bi-youtube",
                       viewBox: "0 0 16 16",
                     },
-                    m.default.createElement("path", {
+                    f.default.createElement("path", {
                       d: "M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z",
                     })
                   )
@@ -807,16 +829,16 @@
               )
             )
           ),
-          m.default.createElement(
+          f.default.createElement(
             "div",
             { className: "Areas__HeaderArea-sc-8gfrea-3 HeaderArea" },
-            m.default.createElement(
+            f.default.createElement(
               "div",
               {
                 className:
                   "Areas__InteractiveArea-sc-8gfrea-0 Areas__Column-sc-8gfrea-5 bJSfgC Column-lg",
               },
-              m.default.createElement(
+              f.default.createElement(
                 "p",
                 {
                   className:
@@ -825,7 +847,7 @@
                 },
                 "Add From Youtube"
               ),
-              m.default.createElement(
+              f.default.createElement(
                 "p",
                 {
                   className:
@@ -839,6 +861,278 @@
         )
       );
     }),
+    (v = t(a())),
+    (w = t(e())),
+    (x = class {
+      constructor(e, t, a = {}) {
+        (this.name = e),
+          (this.settingsId = t),
+          (this.initialSettingsFields = a),
+          (this.settingsFields = this.initialSettingsFields),
+          (this.setRerender = null),
+          (this.pushSettings = async () => {
+            for (
+              Object.entries(this.settingsFields).forEach(([e, t]) => {
+                "button" !== t.type &&
+                  void 0 === this.getFieldValue(e) &&
+                  this.setFieldValue(e, t.defaultValue);
+              });
+              !Spicetify?.Platform?.History?.listen;
+
+            )
+              await new Promise((e) => setTimeout(e, 100));
+            this.stopHistoryListener && this.stopHistoryListener(),
+              (this.stopHistoryListener = Spicetify.Platform.History.listen(
+                (e) => {
+                  "/preferences" === e.pathname && this.render();
+                }
+              )),
+              "/preferences" === Spicetify.Platform.History.location.pathname &&
+                (await this.render());
+          }),
+          (this.rerender = () => {
+            this.setRerender && this.setRerender(Math.random());
+          }),
+          (this.render = async () => {
+            for (
+              ;
+              !document.getElementById("desktop.settings.selectLanguage");
+
+            ) {
+              if (
+                "/preferences" !== Spicetify.Platform.History.location.pathname
+              )
+                return;
+              await new Promise((e) => setTimeout(e, 100));
+            }
+            var e = document.querySelector(
+              ".main-view-container__scroll-node-child main div"
+            );
+            if (!e)
+              return console.error(
+                "[spcr-settings] settings container not found"
+              );
+            let t = Array.from(e.children).find(
+              (e) => e.id === this.settingsId
+            );
+            t
+              ? console.log(t)
+              : (((t = document.createElement("div")).id = this.settingsId),
+                e.appendChild(t)),
+              w.default.render(
+                v.default.createElement(this.FieldsContainer, null),
+                t
+              );
+          }),
+          (this.addButton = (e, t, a, l, i) => {
+            this.settingsFields[e] = {
+              type: "button",
+              description: t,
+              value: a,
+              events: { onClick: l, ...i },
+            };
+          }),
+          (this.addInput = (e, t, a, l, i, r) => {
+            this.settingsFields[e] = {
+              type: "input",
+              description: t,
+              defaultValue: a,
+              inputType: i,
+              events: { onChange: l, ...r },
+            };
+          }),
+          (this.addHidden = (e, t) => {
+            this.settingsFields[e] = { type: "hidden", defaultValue: t };
+          }),
+          (this.addToggle = (e, t, a, l, i) => {
+            this.settingsFields[e] = {
+              type: "toggle",
+              description: t,
+              defaultValue: a,
+              events: { onChange: l, ...i },
+            };
+          }),
+          (this.addDropDown = (e, t, a, l, i, r) => {
+            this.settingsFields[e] = {
+              type: "dropdown",
+              description: t,
+              defaultValue: a[l],
+              options: a,
+              events: { onSelect: i, ...r },
+            };
+          }),
+          (this.getFieldValue = (e) =>
+            JSON.parse(
+              Spicetify.LocalStorage.get(this.settingsId + "." + e) || "{}"
+            )?.value),
+          (this.setFieldValue = (e, t) => {
+            Spicetify.LocalStorage.set(
+              this.settingsId + "." + e,
+              JSON.stringify({ value: t })
+            );
+          }),
+          (this.FieldsContainer = () => {
+            var [e, t] = (0, v.useState)(0);
+            return (
+              (this.setRerender = t),
+              v.default.createElement(
+                "div",
+                { className: "x-settings-section", key: e },
+                v.default.createElement(
+                  "h2",
+                  { className: "TypeElement-cello-textBase-type" },
+                  this.name
+                ),
+                Object.entries(this.settingsFields).map(([e, t]) =>
+                  v.default.createElement(this.Field, { nameId: e, field: t })
+                )
+              )
+            );
+          }),
+          (this.Field = (a) => {
+            var e = this.settingsId + "." + a.nameId;
+            let t;
+            if (
+              ((t =
+                "button" === a.field.type
+                  ? a.field.value
+                  : this.getFieldValue(a.nameId)),
+              "hidden" === a.field.type)
+            )
+              return v.default.createElement(v.default.Fragment, null);
+            let [l, i] = (0, v.useState)(t),
+              r = (e) => {
+                void 0 !== e && (i(e), this.setFieldValue(a.nameId, e));
+              };
+            return v.default.createElement(
+              "div",
+              { className: "x-settings-row" },
+              v.default.createElement(
+                "div",
+                { className: "x-settings-firstColumn" },
+                v.default.createElement(
+                  "label",
+                  {
+                    className: "TypeElement-viola-textSubdued-type",
+                    htmlFor: e,
+                  },
+                  a.field.description || ""
+                )
+              ),
+              v.default.createElement(
+                "div",
+                { className: "x-settings-secondColumn" },
+                "input" === a.field.type
+                  ? v.default.createElement("input", {
+                      className: "x-settings-input",
+                      id: e,
+                      dir: "ltr",
+                      value: l,
+                      type: a.field.inputType || "text",
+                      ...a.field.events,
+                      onChange: (e) => {
+                        r(e.currentTarget.value);
+                        var t = a.field.events?.onChange;
+                        t && t(e);
+                      },
+                    })
+                  : "button" === a.field.type
+                  ? v.default.createElement(
+                      "span",
+                      null,
+                      v.default.createElement(
+                        "button",
+                        {
+                          id: e,
+                          className:
+                            "Button-sc-y0gtbx-0 Button-small-buttonSecondary-useBrowserDefaultFocusStyle x-settings-button",
+                          ...a.field.events,
+                          onClick: (e) => {
+                            r();
+                            var t = a.field.events?.onClick;
+                            t && t(e);
+                          },
+                          type: "button",
+                        },
+                        l
+                      )
+                    )
+                  : "toggle" === a.field.type
+                  ? v.default.createElement(
+                      "label",
+                      { className: "x-settings-secondColumn x-toggle-wrapper" },
+                      v.default.createElement("input", {
+                        id: e,
+                        className: "x-toggle-input",
+                        type: "checkbox",
+                        checked: l,
+                        ...a.field.events,
+                        onClick: (e) => {
+                          r(e.currentTarget.checked);
+                          var t = a.field.events?.onClick;
+                          t && t(e);
+                        },
+                      }),
+                      v.default.createElement(
+                        "span",
+                        { className: "x-toggle-indicatorWrapper" },
+                        v.default.createElement("span", {
+                          className: "x-toggle-indicator",
+                        })
+                      )
+                    )
+                  : "dropdown" === a.field.type
+                  ? v.default.createElement(
+                      "select",
+                      {
+                        className: "main-dropDown-dropDown",
+                        id: e,
+                        ...a.field.events,
+                        onChange: (e) => {
+                          r(a.field.options[e.currentTarget.selectedIndex]);
+                          var t = a.field.events?.onChange;
+                          t && t(e);
+                        },
+                      },
+                      a.field.options.map((e, t) =>
+                        v.default.createElement(
+                          "option",
+                          { selected: e === l, value: t + 1 },
+                          e
+                        )
+                      )
+                    )
+                  : v.default.createElement(v.default.Fragment, null)
+              )
+            );
+          });
+      }
+    }),
+    (O = (() => {
+      let t = "https://sc-youtube-api-production.up.railway.app",
+        a = new x("Youtube Importer Settings", "youtube-importer");
+      return (
+        a.addInput("backend-server", "Backend to get videos from", t, () => {
+          var e = a.getFieldValue("backend-server");
+          ("" !== e.trim() &&
+            /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/.test(e)) ||
+            (a.setFieldValue("backend-server", t), a.rerender());
+        }),
+        a.addToggle(
+          "download-parallelly",
+          "Queue downloads parallelly instead of in a queue",
+          !0
+        ),
+        a.addDropDown(
+          "batch-size",
+          "Size of batches if downloading parallelly",
+          Array.from({ length: 8 }, (e, t) => (t + 1).toString()),
+          4
+        ),
+        a.pushSettings(),
+        a
+      );
+    })()),
     (async () => {
       new MutationObserver(() => {
         var e,
@@ -861,7 +1155,7 @@
           (e.id = "spicetify-youtube-menuitem"),
           t.appendChild(e),
           Spicetify.ReactDOM.createRoot(e).render(
-            p.default.createElement(v, null)
+            p.default.createElement(b, null)
           ));
       }).observe(document.body, { childList: !0, subtree: !0 }),
         (Spicetify.SVGIcons.youtube = `
@@ -871,7 +1165,7 @@
 `),
         new Spicetify.ContextMenu.Item(
           "Import from YouTube",
-          x,
+          S,
           void 0,
           "youtube"
         ).register();

@@ -1,6 +1,6 @@
 <h1 align="left">
   YouTube Importer for Spicetify
-  <img src="https://spicetify.app/images/spicetify.png" width="30" align="right" />
+  <img src="docs/icon.png" width="30" align="right" />
 </h1>
 
 A simple extension for **Spicetify** that lets you input a link to a public video or playlist from YouTube and directly download it.
@@ -26,6 +26,11 @@ A simple extension for **Spicetify** that lets you input a link to a public vide
 ---
 
 ## Installation
+
+- Install [Spicetify Marketplace](https://github.com/spicetify/marketplace)
+- Search "Youtube importer" on the marketplace and install it
+
+## Manual Installation
 
 1. Clone or download this repository
 2. Copy the folder to your Spicetify extensions directory:
