@@ -136,6 +136,16 @@ export default function AddFromYoutubeModal() {
       // @ts-ignore - some environments don't have types for showDirectoryPicker
       const handle = await (window as any).showDirectoryPicker();
       setDownloadDir(handle);
+
+      /* Enable local files in settings if its disabled
+       However we cant add a path to this as the handle does not expose the full direct path,
+       the user will still have to manually input the foder location in settings
+        */
+      const isEnabled = Spicetify.Platform.LocalFilesAPI.getIsEnabled();
+      if (!isEnabled) {
+        Spicetify.Platform.LocalFilesAPI.setIsEnabled(true);
+      }
+
       return handle;
     } catch (err) {
       console.warn("Directory pick cancelled or failed", err);
