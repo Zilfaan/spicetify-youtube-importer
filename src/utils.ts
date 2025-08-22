@@ -56,3 +56,9 @@ export const getPlaylistId = (youtubeUrl: string): string | null => {
   const match = youtubeUrl.match(/[?&]list=([a-zA-Z0-9_-]+)/); // Regex to extract playlist id
   return match ? match[1] : null;
 };
+
+export const getVideoIdFromTrackName = (trackName: string): string | null => {
+  // Matches "Title [videoId].mp3"
+  const match = trackName.match(/\[([a-zA-Z0-9_-]{11})\]\.mp3$/);
+  return match ? match[1] : null;
+};

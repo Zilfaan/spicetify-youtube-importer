@@ -1,23 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createPage } from "./createPage";
 import YoutubePlayer from "./YoutubePlayer";
+import { getVideoIdFromTrackName } from "../utils";
+
+// State for the current video ID
+const videoState = {
+  current: null as string | null,
+  set: (id: string | null) => (videoState.current = id),
+};
 
 const { goToPage, goBack } = createPage({
   pathname: "youtube-player-local",
-  container: <YoutubePlayer />,
+  container: <YoutubePlayer videoState={videoState} />,
 });
 
-const handleClick = () => {
-  // Check if we are already on the youtube player page
-  const currentPath = Spicetify.Platform?.History.location.pathname;
-  if (currentPath === "/youtube-player-local/") {
-    goBack();
-  } else {
-    goToPage();
-  }
-};
-
 const NowPlayingButton = () => {
+  const [videoId, setVideoId] = useState<string | null>(null);
+
+  const updateButton = () => {
+    const track = Spicetify.Player.data?.item;
+    const metadata = track?.metadata as Record<string, any>;
+
+    // Check if currently playing song is a local file and has a video id
+    if (!track?.isLocal || !metadata?.local_file_path) {
+      setVideoId(null);
+      videoState.set(null);
+      return;
+    }
+    // Obtained video id, now send it to the youtube player component
+    const id = getVideoIdFromTrackName(metadata.local_file_path);
+    setVideoId(id);
+    videoState.set(id);
+  };
+
+  // Ensure video id stays updated even when songs change
+  useEffect(() => {
+    updateButton();
+    Spicetify.Player.addEventListener("songchange", updateButton);
+
+    return () => {
+      Spicetify.Player.removeEventListener("songchange", updateButton);
+    };
+  }, []);
+
+  if (!videoId) return null;
+
+  const handleClick = () => {
+    const currentPath = Spicetify.Platform?.History.location.pathname;
+    // Let the now playing button work in a toggle basis
+    if (currentPath === "/youtube-player-local/") {
+      goBack();
+    } else {
+      goToPage();
+    }
+  };
+
   return (
     <button
       className="Button-sc-1dqy6lx-0 Button-buttonTertiary-small-iconOnly-useBrowserDefaultFocusStyle-condensed view-from-youtube"
