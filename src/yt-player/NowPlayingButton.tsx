@@ -1,4 +1,3 @@
-// NowPlayingButton.tsx
 import React from "react";
 import { createPage } from "./createPage";
 import YoutubePlayer from "./YoutubePlayer";
@@ -9,7 +8,7 @@ const { goToPage, goBack } = createPage({
 });
 
 const handleClick = () => {
-  // Check if we are already on the custom page
+  // Check if we are already on the youtube player page
   const currentPath = Spicetify.Platform?.History.location.pathname;
   if (currentPath === "/youtube-player-local/") {
     goBack();

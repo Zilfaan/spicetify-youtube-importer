@@ -1,8 +1,8 @@
 import React from "react";
-import MenuItem from "./AddMenuItem";
-import launchYouTubeImport from "./launchYouTubeImport";
+import MenuItem from "./yt-import/AddMenuItem";
+import launchYouTubeImport from "./yt-import/launchYouTubeImport";
 import registerSettings from "./registerSettings";
-import NowPlayingButton from "./NowPlayingButton";
+import NowPlayingButton from "./yt-player/NowPlayingButton";
 
 // Register settings for the extension
 export const settings = registerSettings();

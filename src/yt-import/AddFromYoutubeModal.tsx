@@ -4,10 +4,10 @@ import {
   getYouTubeId,
   isPlaylist,
   isValidYouTubeUrl,
-} from "./utils";
-import SpiceSpinner from "./types/SpiceSpinner";
+} from "../utils";
+import SpiceSpinner from "../types/SpiceSpinner";
 import Tutorial from "./Tutorial";
-import { settings } from "./app";
+import { settings } from "../app";
 
 export default function AddFromYoutubeModal() {
   // States
