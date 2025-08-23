@@ -23,12 +23,16 @@ const YoutubePlayer = () => {
   };
 
   // Ensure video id stays updated even when songs change
-  //TODO: This does not work properly if the user opens spotify and the current song is in the desired format
   useEffect(() => {
-    updateId();
+    // Account for song on spotify open matching the format
+    const timeout = setTimeout(() => {
+      updateId();
+    }, 500);
+
     Spicetify.Player.addEventListener("songchange", updateId);
 
     return () => {
+      clearTimeout(timeout);
       Spicetify.Player.removeEventListener("songchange", updateId);
     };
   }, []);

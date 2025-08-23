@@ -28,10 +28,15 @@ const NowPlayingButton = () => {
 
   // Ensure video id stays updated even when songs change
   useEffect(() => {
-    updateButton();
+    // Account for song on spotify open matching the format
+    const timeout = setTimeout(() => {
+      updateButton();
+    }, 500);
+
     Spicetify.Player.addEventListener("songchange", updateButton);
 
     return () => {
+      clearTimeout(timeout);
       Spicetify.Player.removeEventListener("songchange", updateButton);
     };
   }, []);
