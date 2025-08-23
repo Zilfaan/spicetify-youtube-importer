@@ -31,6 +31,13 @@ export const createPage = ({ pathname, container }: CreatePageProps) => {
 
   const root = document.createElement("div");
   root.id = rootId;
+  // Ensure content stays positioned at the top and takes the entire space
+  root.style.position = "absolute";
+  root.style.top = "0";
+  root.style.left = "0";
+  root.style.width = "100%";
+  root.style.height = "100%";
+  root.style.overflow = "hidden";
 
   const addToDom = async () => {
     const parent = await waitForElement(

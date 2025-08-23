@@ -2,16 +2,11 @@ import React, { useEffect, useState } from "react";
 import { createPage } from "./createPage";
 import YoutubePlayer from "./YoutubePlayer";
 import { getVideoIdFromTrackName } from "../utils";
-
 // State for the current video ID
-const videoState = {
-  current: null as string | null,
-  set: (id: string | null) => (videoState.current = id),
-};
 
 const { goToPage, goBack } = createPage({
   pathname: "youtube-player-local",
-  container: <YoutubePlayer videoState={videoState} />,
+  container: <YoutubePlayer />,
 });
 
 const NowPlayingButton = () => {
@@ -24,13 +19,11 @@ const NowPlayingButton = () => {
     // Check if currently playing song is a local file and has a video id
     if (!track?.isLocal || !metadata?.local_file_path) {
       setVideoId(null);
-      videoState.set(null);
       return;
     }
     // Obtained video id, now send it to the youtube player component
     const id = getVideoIdFromTrackName(metadata.local_file_path);
     setVideoId(id);
-    videoState.set(id);
   };
 
   // Ensure video id stays updated even when songs change
