@@ -13,8 +13,12 @@ A simple extension for **Spicetify** that lets you input a link to a public vide
 
 - Download **individual YouTube videos** as MP3 files
 - Download **entire playlists**, with optional selection of specific videos
+- Inbuilt **YouTube player** to view videos for the downloaded audio
 - Fully integrated inside Spotify using **Spicetify**
 - Includes a built-in **tutorial** for first-time users
+
+&nbsp;
+![youtube preview](docs/youtube.png)
 
 ---
 
