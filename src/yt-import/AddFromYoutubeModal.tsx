@@ -141,9 +141,13 @@ export default function AddFromYoutubeModal() {
        However we cant add a path to this as the handle does not expose the full direct path,
        the user will still have to manually input the foder location in settings
         */
-      const isEnabled = Spicetify.Platform.LocalFilesAPI.getIsEnabled();
-      if (!isEnabled) {
-        Spicetify.Platform.LocalFilesAPI.setIsEnabled(true);
+      if (Spicetify.Platform?.LocalFilesAPI?.getIsEnabled) {
+        const isEnabled = Spicetify.Platform.LocalFilesAPI.getIsEnabled();
+        if (!isEnabled) {
+          Spicetify.Platform.LocalFilesAPI.setIsEnabled(true);
+        }
+      } else {
+        console.warn("LocalFilesAPI not available in this Spicetify version");
       }
 
       return handle;
