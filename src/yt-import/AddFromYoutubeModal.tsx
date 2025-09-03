@@ -370,6 +370,21 @@ export default function AddFromYoutubeModal() {
     return <Tutorial />;
   }
 
+  async function verifyPermission(fileHandle: any) {
+    const options = { mode: "readwrite" };
+
+    // Check if permission was already granted. If so, return true.
+    if ((await fileHandle.queryPermission(options)) === "granted") {
+      return true;
+    }
+    // Request permission. If the user grants permission, return true.
+    if ((await fileHandle.requestPermission(options)) === "granted") {
+      return true;
+    }
+    // The user didn't grant permission, so return false.
+    return false;
+  }
+
   if (downloadHistory.length > 0 || currentDownloads.length > 0)
     return (
       <div
@@ -496,6 +511,11 @@ export default function AddFromYoutubeModal() {
             if (!dir) {
               dir = await pickDownloadFolder();
               if (!dir) return; // user cancelled
+            }
+
+            if (!verifyPermission(dir)) {
+              Spicetify.showNotification("Please allow file saving!", true);
+              return;
             }
 
             // start downloads using the chosen dir (no further prompts)
