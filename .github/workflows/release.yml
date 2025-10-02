@@ -1,0 +1,53 @@
+name: Build and Release on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Build project
+      - name: Build project
+        run: npm run build-local
+
+      # Commit the built file
+      - name: Commit built file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist/spicetify-youtube-importer.js
+          git diff --cached --quiet || git commit -m "chore: update dist/spicetify-youtube-importer.js [skip ci]"
+          git push origin main
+
+      # Create a release
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v0.1.${{ github.run_number }}
+          release_name: Release v0.1.${{ github.run_number }}
+          files: dist/spicetify-youtube-importer.js
+          draft: false
+          prerelease: false
+          generate_release_notes: true
