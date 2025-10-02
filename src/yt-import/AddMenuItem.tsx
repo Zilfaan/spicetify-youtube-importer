@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import launchYouTubeImport from "./launchYouTubeImport";
 const boxStyle: React.CSSProperties & Record<string, string> = {
-  ["--box-padding-block-start"]: "2px",
-  ["--box-padding-block-end"]: "2px",
-  ["--box-padding-inline-start"]: "calc(var(--encore-spacing-tighter) - 4px)",
-  ["--box-padding-inline-end"]: "var(--encore-spacing-tighter)",
+  ["--box-padding-block-start"]: "8px",
+  ["--box-padding-block-end"]: "8px",
+  ["--box-padding-inline-start"]: "8px",
+  ["--box-padding-inline-end"]: "16px",
   ["--box-min-block-size"]: "56px",
 };
 const MenuItem = () => {
@@ -12,6 +12,7 @@ const MenuItem = () => {
 
   return (
     <button
+      type="button"
       onClick={launchYouTubeImport}
       id="spicetify-youtube-menuitem"
       className="kLKq7fz4Llya50jObe9a"
@@ -20,6 +21,14 @@ const MenuItem = () => {
       onMouseOver={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       aria-describedby="subtitle-global-create-youtube"
+      style={{
+        background: "transparent",
+        border: "none",
+        padding: 0,
+        margin: 0,
+        width: "100%",
+        display: "block",
+      }}
     >
       <div
         className="e-91000-box e-91000-baseline e-91000-box--naked e-91000-box--browser-default-focus e-91000-box--padding-custom e-91000-box--min-size e-91000-Box-sc-8t9c76-0 Box-group-naked-listRow-hasLeadingOrMedia-minBlockSize_56px"
@@ -28,7 +37,17 @@ const MenuItem = () => {
         <div className="Areas__HeaderSideArea-sc-8gfrea-1 HeaderSideArea">
           <div className="Areas__HeaderSideAreaFlexContainer-sc-8gfrea-2 HeaderSideAreaFlexContainer">
             <div className="Areas__InteractiveArea-sc-8gfrea-0 Areas__LeadingSlot-sc-8gfrea-6 bJSfgC hUkHtl">
-              <div className="uKWufPQjLFxGolUWWIqH">
+              <div
+                style={{
+                  padding: "12px",
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "background 0.2s ease",
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="25"

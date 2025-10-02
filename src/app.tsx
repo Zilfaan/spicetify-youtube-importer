@@ -66,7 +66,7 @@ export default function app() {
   // Actually register the button to the now playing view
   observeDOM('[data-testid="now-playing-widget"]', (widget) => {
     const container = widget.querySelector<HTMLElement>(
-      ".ZbFkATBbLkWh2SHMXDt6"
+      '[data-testid="now-playing-widget"] > div:last-child'
     );
     if (container && !container.querySelector(".view-from-youtube")) {
       // create a child specifically for the button
