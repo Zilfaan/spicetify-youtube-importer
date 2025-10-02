@@ -4,7 +4,7 @@ import AddFromYoutubeModal from "./AddFromYoutubeModal";
 export default function launchYouTubeImport() {
   // Close "Create" menu if open
   const menuToggleButton = document.querySelector(
-    'button.AIlmv6h8bR5NY5R0VceT[aria-label="Create"]'
+    'button[aria-label="Create"]'
   );
 
   const createMenu = document
